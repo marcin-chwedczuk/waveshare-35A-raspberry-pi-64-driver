@@ -1,0 +1,104 @@
+#!/bin/bash
+
+MARK=$(head -n 1 ./boot/mark)
+NODE_NAME=$(uname -n)
+
+echo "Update apt database..."
+sudo apt update
+
+
+if [[ "$MARK" == "0" && "$1" != "lite" && "$2" != "lite" ]]; then
+    echo "1" > ./boot/mark
+    echo 'To reinstall driver exectue "echo 0 > ./boot/mark" and rerun the script.'
+    
+    echo "Installing evdev..."
+    sudo apt-get install xserver-xorg-input-evdev
+    sudo cp -rf /usr/share/X11/xorg.conf.d/10-evdev.conf /usr/share/X11/xorg.conf.d/45-evdev.conf
+    
+    echo "Installing cmake..."
+    sudo apt-get install cmake -y
+
+    echo "Building fbcp..."
+    cd ./rpi-fbcp/build/
+    sudo cmake ..
+    sudo make
+    sudo install fbcp /usr/local/bin/fbcp
+    cd ../../
+    sudo dpkg -i -B ./xinput-calibrator_0.7.5-1_armhf.deb
+    sudo mkdir -p /usr/share/X11/xorg.conf.d
+    
+    elif test "$MARK" = "0" -a "$1" = "lite" ;then
+    echo "1" > ./boot/mark
+    echo "No touch driver installled"
+    echo "No fbcp driver installled"
+    sudo mkdir -p /usr/share/X11/xorg.conf.d
+    
+fi
+
+if test "$NODE_NAME" != "kali" ;then
+    if test "$1" != "lite" -a "$2" != "lite" ;then
+        sudo cp -rf ./etc/rc.local-gpio /etc/rc.local
+        sudo cp -rf ./usr/share/X11/xorg.conf.d/99-fbturbo.conf-HDMI  /usr/share/X11/xorg.conf.d/99-fbturbo.conf
+    else
+        sudo cp -rf ./etc/rc.local /etc/rc.local
+        sudo cp -rf ./usr/share/X11/xorg.conf.d/99-fbturbo.conf  /usr/share/X11/xorg.conf.d/99-fbturbo.conf
+    fi
+else
+    sudo cp ./usr/share/X11/xorg.conf.d/99-fbturbo.conf-kali /usr/share/X11/xorg.conf.d/99-fbturbo.conf
+fi
+
+
+if test "$1" = "0" -o "$#" = "0" -o "$2" = "0";then
+    sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-35  /usr/share/X11/xorg.conf.d/99-calibration.conf
+    sudo cp ./boot/config-35.txt /boot/config.txt
+    if test "$NODE_NAME" = "retropie"; then
+        sudo cp ./boot/config-35.txt-retropie /boot/config.txt
+    fi
+    echo "LCD configure 0"
+    elif test "$1" = "lite" -a "$#" = "1" ;then
+    sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-35  /usr/share/X11/xorg.conf.d/99-calibration.conf
+    sudo cp ./boot/config-35.txt /boot/config.txt
+    echo "LCD configure 0"
+    elif test "$1" = "90" -o "$2" = "90" ;then
+    if test "$1" = "lite" -o "$2" = "lite" -o "$NODE_NAME" = "kali"; then
+        sudo cp ./boot/config-35.txt-90-lite /boot/config.txt
+    else
+        sudo cp ./boot/config-35.txt-90 /boot/config.txt
+    fi
+    echo "LCD configure 90"
+    sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-35-270  /usr/share/X11/xorg.conf.d/99-calibration.conf
+    elif test "$1" = "180" -o "$2" = "180" ;then
+    if test "$1" = "lite" -o "$2" = "lite" -o "$NODE_NAME" = "kali" ; then
+        sudo cp ./boot/config-35.txt-180-lite /boot/config.txt
+    else
+        sudo cp ./boot/config-35.txt-180 /boot/config.txt
+    fi
+    echo "LCD configure 180"
+    sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-35-180  /usr/share/X11/xorg.conf.d/99-calibration.conf
+    elif test "$1" = "270" -o "$2" = "270" ; then
+    if test "$1" = "lite" -o "$2" = "lite" -o "$NODE_NAME" = "kali" ; then
+        sudo cp ./boot/config-35.txt-270-lite /boot/config.txt
+    else
+        sudo cp ./boot/config-35.txt-270 /boot/config.txt
+    fi
+    echo "LCD configure 270"
+    sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-35-90  /usr/share/X11/xorg.conf.d/99-calibration.conf
+fi
+
+sudo cp ./waveshare35a-overlay.dtb /boot/overlays/waveshare35a.dtbo
+sudo cp ./waveshare35a-overlay.dtb /boot/overlays/
+#sudo cp -rf ./usr/share/X11/xorg.conf.d/99-fbturbo.conf  /usr/share/X11/xorg.conf.d/
+if [ -b /dev/mmcblk0p7 ]; then
+    sudo cp ./cmdline.txt-noobs /boot/cmdline.txt
+else
+    sudo cp ./cmdline.txt /boot/
+fi
+
+sudo cp ./inittab /etc/
+
+if test "$#" = "0" -o "$1" = "0" -o "$1" = "90"  -o "$1" = "180" -o "$1" = "270" -o "$2" = "0" -o "$2" = "90"  -o "$2" = "180" -o "$2" = "270" -o "$1" = "lite" -o "$2" = "lite" ; then
+    sudo reboot
+    echo "reboot now"
+else
+    echo "Invalid parameter,Usage:LCD35-show [0] [90] [180] [270] [lite]"
+fi
