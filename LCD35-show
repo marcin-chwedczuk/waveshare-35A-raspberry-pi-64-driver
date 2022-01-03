@@ -1,6 +1,7 @@
 #!/bin/bash
 
 MARK=$(head -n 1 ./boot/mark)
+BACKUP_SUFFIX=$(date +"%Y-%m-%dT%H-%M-%S")
 
 if [[ "$MARK" == "0" ]]; then
         echo "Update apt database..."
@@ -40,7 +41,7 @@ fi
 
 if [[ "$MARK" == "0" ]]; then
     echo "Installing rc.local and fbturbo..."
-    sudo cp /etc/rc.local /etc/rc.local.backup
+    sudo cp /etc/rc.local "/etc/rc.local.backup-$BACKUP_SUFFIX"
     if [[ "$1" != "lite" && "$2" != "lite" ]]; then
         sudo cp -rf ./etc/rc.local-gpio /etc/rc.local
         sudo cp -rf ./usr/share/X11/xorg.conf.d/99-fbturbo.conf-HDMI  /usr/share/X11/xorg.conf.d/99-fbturbo.conf
@@ -57,7 +58,7 @@ if [[ "$MARK" == "0" ]]; then
     sudo cp ./waveshare35a-overlay.dtb /boot/overlays/
     
     echo "Fixing cmdline.txt parameters (file will be OVERWRITTEN)..."
-    sudo cp /boot/cmdline.txt /boot/cmdline.txt.backup
+    sudo cp /boot/cmdline.txt "/boot/cmdline.txt.backup-$BACKUP_SUFFIX"
     if [ -b /dev/mmcblk0p7 ]; then
         sudo cp ./cmdline.txt-noobs /boot/cmdline.txt
     else
@@ -65,7 +66,7 @@ if [[ "$MARK" == "0" ]]; then
     fi
     
     echo "Fixing /etc/inittab (file will be OVERWRITTEN)..."
-    sudo cp /etc/inittab /etc/inittab.backup || echo "no existing inittab (skipping backup)"
+    sudo cp /etc/inittab "/etc/inittab.backup-$BACKUP_SUFFIX" || echo "no existing inittab (skipping backup)"
     sudo cp ./inittab /etc/
     
     echo "Driver installation is completed!"
