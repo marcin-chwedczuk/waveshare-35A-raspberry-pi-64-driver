@@ -57,7 +57,7 @@ if [[ "$MARK" == "0" ]]; then
     sudo cp ./waveshare35a-overlay.dtb /boot/overlays/waveshare35a.dtbo
     sudo cp ./waveshare35a-overlay.dtb /boot/overlays/
     
-    echo "Fixing cmdline.txt parameters (file will be OVERWRITTEN)..."
+    echo "Fixing cmdline.txt parameters (file will be OVERWRITTEN) - MERGE MANUALLY OR AT LEAST CHECK DIFF..."
     sudo cp /boot/cmdline.txt "/boot/cmdline.txt.backup-$BACKUP_SUFFIX"
     if [ -b /dev/mmcblk0p7 ]; then
         sudo cp ./cmdline.txt-noobs /boot/cmdline.txt
@@ -69,6 +69,9 @@ if [[ "$MARK" == "0" ]]; then
     sudo cp /etc/inittab "/etc/inittab.backup-$BACKUP_SUFFIX" || echo "no existing inittab (skipping backup)"
     sudo cp ./inittab /etc/
     
+    echo "Making /boot/config.txt backup..."
+    sudo cp /boot/config.txt "/boot/config.txt.backup-$BACKUP_SUFFIX"
+
     echo "Driver installation is completed!"
 fi
 
