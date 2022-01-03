@@ -35,3 +35,6 @@ EN:https://www.waveshare.com/wiki/3.5inch_RPi_LCD_(A)
 ### Driver install:
 
 sudo ./LCD35-show
+
+After installation please check the backup files, to make sure that no important setting was overwritten.
+Read (quite short) script source to find out more.
