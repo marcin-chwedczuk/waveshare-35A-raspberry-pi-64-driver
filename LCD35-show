@@ -18,6 +18,7 @@ if [[ "$MARK" == "0" && "$1" != "lite" && "$2" != "lite" ]]; then
     sudo apt-get install cmake -y
     
     echo "Building fbcp..."
+    mkdir -p ./rpi-fbcp/build/
     cd ./rpi-fbcp/build/
     sudo cmake ..
     sudo make
