@@ -7,7 +7,7 @@ with _64-bit_ beta Raspberry PI OS.
 The code was tested with: https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2021-11-08/ release.
 
 Sorce code for device tree's can be found here: https://github.com/swkim01/waveshare-dtoverlays/blob/master/dtc.sh
-`dtb` files can be decompiled using `dtc` command:
+`dtb` files can be decomposed using `dtc` command:
 ```
 dtc -I dtb -O dts /boot/overlays/waveshare35a.dtbo
 ```

@@ -46,8 +46,11 @@ if [[ "$MARK" == "0" ]]; then
         sudo cp -rf ./etc/rc.local /etc/rc.local
         sudo cp -rf ./usr/share/X11/xorg.conf.d/99-fbturbo.conf  /usr/share/X11/xorg.conf.d/99-fbturbo.conf
     fi
+
+    echo "Compile overlays..."
+    dtc -O dtb -o waveshare35a-overlay.dtb waveshare35a.dts
     
-    echo "Copy overlays..."
+    echo "Install overlays..."
     sudo cp ./waveshare35a-overlay.dtb /boot/overlays/waveshare35a.dtbo
     sudo cp ./waveshare35a-overlay.dtb /boot/overlays/
     
