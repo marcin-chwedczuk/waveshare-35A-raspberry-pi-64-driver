@@ -78,7 +78,7 @@
 				compatible = "ti,ads7846";
 				reg = <1>;
 
-				spi-max-frequency = <2000000>;
+				spi-max-frequency = <1000000>; /* Max freq for 3.3V SPI on RPI */
 				interrupts = <17 2>; /* high-to-low edge triggered */
 				interrupt-parent = <&gpio>;
 				pendown-gpio = <&gpio 17 1>;

@@ -2,9 +2,10 @@
 
 MARK=$(head -n 1 ./boot/mark)
 
-echo "Update apt database..."
-sudo apt update
-
+if [[ "$MARK" == "0" ]]; then
+        echo "Update apt database..."
+        sudo apt update
+fi
 
 if [[ "$MARK" == "0" && "$1" != "lite" && "$2" != "lite" ]]; then
     echo "1" > ./boot/mark
@@ -64,7 +65,7 @@ if [[ "$MARK" == "0" ]]; then
     fi
     
     echo "Fixing /etc/inittab (file will be OVERWRITTEN)..."
-    sudo cp /etc/inittab /etc/inittab.backup
+    sudo cp /etc/inittab /etc/inittab.backup || echo "no existing inittab (skipping backup)"
     sudo cp ./inittab /etc/
     
     echo "Driver installation is completed!"
